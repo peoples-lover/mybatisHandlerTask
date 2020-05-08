@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gb.mapper.TypeHandlerDemoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gb.domain.TypeHandlerDemo">
+        <id column="id" property="id"/>
+        <result column="type_handler" property="typeHandler" typeHandler="com.gb.type.MyTypeHandler"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modify" property="gmtModify"/>
+    </resultMap>
+
+    <resultMap id="TypeHandlerMap" type="com.gb.domain.TypeHandlerDemo">
+        <id column="id" property="id"/>
+        <result column="type_handler" property="typeHandler" typeHandler="com.gb.type.MyTypeHandler"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modify" property="gmtModify"/>
+    </resultMap>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, type_handler AS typeHandler, is_delete AS isDelete, gmt_create AS gmtCreate, gmt_modify AS gmtModify
+    </sql>
+
+
+
+
+    <select id="selectTypeHandlerDemoById" resultMap="TypeHandlerMap" >
+        select * from type_handler_demo  where id=#{id} and is_delete = 0 limit 1 
+    </select>
+
+    <insert id="insertTypeHandlerDemo" parameterType="TypeHandlerDemo" useGeneratedKeys="true" keyProperty="id" >
+        insert into type_handler_demo(
+            <if test="typeHandler != null">type_handler, </if>
+            is_delete,
+            gmt_create,
+            gmt_modify
+        )values(
+            <if test="typeHandler != null">
+                #{typeHandler, typeHandler=com.gb.type.MyTypeHandler},
+            </if>
+            0,
+            now(),
+            now()
+        )
+    </insert>
+
+
+    <update id="updateTypeHandlerDemoById" parameterType="TypeHandlerDemo" >
+        update
+            type_handler_demo
+        <trim prefix="set" suffixOverrides=",">
+            <if test="typeHandler != null">
+                #{typeHandler, typeHandler=com.gb.type.MyTypeHandler},
+            </if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="gmtCreate != null">gmt_create = #{gmtCreate},</if>
+            <if test="gmtModify != null">gmt_modify = #{gmtModify}</if>                
+        </trim>
+        ,gmt_modify = now()
+        where id = #{id}
+    </update>
+
+
+    <update id="updateCoverTypeHandlerDemoById" parameterType="TypeHandlerDemo" >
+        update
+            type_handler_demo    
+        set     
+            type_handler = #{typeHandler, typeHandler=com.gb.type.MyTypeHandler},
+            is_delete = #{isDelete},
+            gmt_create = #{gmtCreate},
+            gmt_modify = #{gmtModify}                
+        ,gmt_modify = now()
+        where id = #{id}
+    </update>
+
+
+    <update id="deleteTypeHandlerDemoById" parameterType="java.lang.Long">
+        update type_handler_demo set is_delete = 1 where id=#{id} limit 1  
+    </update>
+
+</mapper>
+
